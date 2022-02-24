@@ -4,7 +4,7 @@
 /*Description    : An educational driver file for IR reciever based      */
 /*                 on NEC standard.                                      */
 /* Date          : 22 02 2022                                            */
-/* Version       : V1.0-> Raw code. (Algorithm A)                        */
+/* Version       : V1.1-> Raw code. (Algorithm A) Essential tests        */
 /* GitHub        : https://github.com/mmokhtar761                        */
 /*************************************************************************/
 #include "STD_TYPES.h"
@@ -31,13 +31,14 @@ u32  NECIRR_u32ArrToDecimel (u8 Local_u8TargetStrtBit , u8 *Local_u8ArrPtr)
       MAN_BIT(decVal,i,Local_u8ArrPtr[i+NECIRR_ADDRESS_START_ARR_POS]);
     }
   }
+  return decVal;
 }
 
 void NECIRR_voidSetActionFunc (void (*Local_fnPtr)(u8 Local_u8Address , u8 Local_u8Data))
 {
   ActionfnPtr = Local_fnPtr;
 }
-u8   NECIRR_u8HandlelFaillingEdge (void)
+void   NECIRR_voidHandlelFaillingEdge (void)
 {
   static u8 i = 0;
   static u8 strtEdgeFlag = 1;
@@ -45,7 +46,7 @@ u8   NECIRR_u8HandlelFaillingEdge (void)
   if (strtEdgeFlag)
   {
     strtEdgeFlag = 0;
-    i =0;
+     i = 0;/**************************************************/
     NECIRR_START_TIMER_FNC;
   }
   else
@@ -55,28 +56,35 @@ u8   NECIRR_u8HandlelFaillingEdge (void)
     NECIRR_STOP_TIMER_FNC;
     /*Read the time elapsed from the last FALLING edge*/
     u32TmeHlder = NECIRR_GET_ELAPSED_TIME_FNC;
-
     /*Polling the value read*/
-    if     (u32TmeHlder>NECIRR_MIN_STRT_BIT_TME && u32TmeHlder>NECIRR_MAX_STRT_BIT_TME)
+    if     (u32TmeHlder>NECIRR_MIN_STRT_BIT_TME && u32TmeHlder<NECIRR_MAX_STRT_BIT_TME)
     {
       /*StartingBit is detected*/
-      i = 0;
+     // i = 0;/**************************************************/
     }
-    else if (u32TmeHlder>NECIRR_MIN_HIGH_TME && u32TmeHlder>NECIRR_MAX_HIGH_TME)
+    else if (u32TmeHlder>NECIRR_MIN_HIGH_TME && u32TmeHlder<NECIRR_MAX_HIGH_TME)
     {
       /*HIGH logic bit is detected*/
       NECIRR_u8ArrFrame[++i] = HIGH;
+
     }
-    else if (u32TmeHlder>NECIRR_MIN_LOW_TME && u32TmeHlder>NECIRR_MAX_LOW_TME)
+    else if (u32TmeHlder>NECIRR_MIN_LOW_TME && u32TmeHlder<NECIRR_MAX_LOW_TME)
     {
       /*LOW logic bit is detected*/
-      NECIRR_u8ArrFrame[++i] = LOW;
+        NECIRR_u8ArrFrame[++i] = LOW;
+
     }
-    else
+    NECIRR_u32ArrTME[i] = u32TmeHlder;
+    /*
+    if (i== 4)
+    	{
+    	i++;
+    	}*/
+ /*   else
     {
       strtEdgeFlag = 1;
-      return NECIRR_ERROR_BAD_TIME
-    }
+      //return NECIRR_ERROR_BAD_TIME;
+    }*/
 
     /*Polling i to know the position we are in the frame*/
     if (i == 32)
@@ -91,18 +99,18 @@ u8   NECIRR_u8HandlelFaillingEdge (void)
     {
       if (NECIRR_u8ArrFrame[i] == NECIRR_u8ArrFrame[i-NECIRR_DATA_WIDTH])
       {
-        return NECIRR_BAD_DATA_BIT;
+        //return NECIRR_BAD_DATA_BIT;
       }
     }
     else if (i > NECIRR_ADDRESS_END_ARR_POS && i < NECIRR_FRAME_WIDTH)
     {
       if (NECIRR_u8ArrFrame[i] == NECIRR_u8ArrFrame[i-NECIRR_ADDRESSE_WIDTH])
       {
-        return NECIRR_BAD_ADDRESS_BIT;
+        //return NECIRR_BAD_ADDRESS_BIT;
       }
     }
 #endif /*NECIRR_EN_BIT_VERIFY*/
     NECIRR_START_TIMER_FNC;
   }
-  return NECIRR_OK;
+ // return NECIRR_OK;
 }
