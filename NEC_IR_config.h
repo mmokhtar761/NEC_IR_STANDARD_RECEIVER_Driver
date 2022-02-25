@@ -4,7 +4,7 @@
 /*Description    : An educational driver file for IR receiver based      */
 /*                 on NEC standard.                                      */
 /* Date          : 22 02 2022                                            */
-/* Version       : V02-> A better optimized code                         */
+/* Version       : V03-> Repeat handling  &  data verification edited    */
 /* GitHub        : https://github.com/mmokhtar761                        */
 /*************************************************************************/
 #ifndef NEC_IR_CONFIG_H
@@ -28,8 +28,8 @@ Options:
 /*Must returns MicroSec. Atleast can count tome upto 108000Micro*/
 #define NECIRR_GET_ELAPSED_TIME_FNC STK_u32GetElapsedTicks()
 
-//If u want to verify each bit of the frame uncomment the following line
+//If u want to verify each bit of the frame define this as 0
 //NOTE: This will make more load on interrupt handlers
-//#define NECIRR_EN_BIT_VERIFY
+#define NECIRR_EN_BIT_VERIFY 0
 
 #endif  /*NEC_IR_CONFIG_H*/

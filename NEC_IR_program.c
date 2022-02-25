@@ -4,7 +4,7 @@
 /*Description    : An educational driver file for IR receiver based      */
 /*                 on NEC standard.                                      */
 /* Date          : 22 02 2022                                            */
-/* Version       : V02-> A better optimized code                         */
+/* Version       : V03-> Repeat handling  &  data verification edited    */
 /* GitHub        : https://github.com/mmokhtar761                        */
 /*************************************************************************/
 #include "STD_TYPES.h"
@@ -24,6 +24,7 @@ void NECIRR_voidHandlelFaillingEdge (void)
   static u8 i=0,strtBitFlag  = 0;
   static u8 strtEdgeFlag = 1;
   u32 u32TmeHlder=0,data=0, address=0;
+  u8  rpeatFlag = 0;
   if (strtEdgeFlag)
   {
     /*Announcing the starting edge has come*/
@@ -46,6 +47,11 @@ void NECIRR_voidHandlelFaillingEdge (void)
       /*Starting Bit is detected*/
       /*Announcing the starting bit has come*/
       strtBitFlag = 1;
+    }
+    else if (u32TmeHlder> NECIRR_REPEAT_MIN_TME && u32TmeHlder<NECIRR_REPEAT_MAX_TME )
+    {
+    	/*Rising flag to let last saved data & address processed */
+    	rpeatFlag =1;
     }
     else if (u32TmeHlder>NECIRR_MIN_HIGH_TME && u32TmeHlder<NECIRR_MAX_HIGH_TME && strtBitFlag)
     {
@@ -74,40 +80,37 @@ void NECIRR_voidHandlelFaillingEdge (void)
       return;
       //return NECIRR_ERROR_BAD_TIME;
     }
-
     /*Polling i to know the position we are in the frame*/
-    if (i == 31)
+    /*to get the actual index, I sup-stracted 1 as i already incremented*/
+#if  NECIRR_EN_BIT_VERIFY
+                    /******this section still under developing*****/
+    if (i-1 > NECIRR_DATA_END_ARR_POS && i-1 < NECIRR_FRAME_WIDTH-1)
     {
-      /*Setting the strtEdgeFlag to wait for the new one to start handling*/
-      strtEdgeFlag  = 1;
-      /*Clearing the strtBitFlag to wait for the new one to start handling*/
-      strtBitFlag   = 0;
-      /*Getting the data byte from the frame*/
-      data = GET_BYTE(NECIRR_u32Frame,NECIRR_DATA_START_ARR_POS);
-      /*Getting the address byte from the frame*/
-      address = GET_BYTE(NECIRR_u32Frame,NECIRR_ADDRESS_START_ARR_POS);
-      /*Calling the passed function to take the action */
-      ActionfnPtr(data, address);
-      /*Return here as no need for starting the timer again*/
-      return;
-      // return NECIRR_OK;
-    }
-#ifdef NECIRR_EN_BIT_VERIFY
-    else if (i > NECIRR_DATA_END_ARR_POS && i < NECIRR_ADDRESS_START_ARR_POS)
-    {
-      if (GET_BIT(NECIRR_u32Frame,i) == GET_BIT(NECIRR_u32Frame,(i-NECIRR_DATA_WIDTH)))
-      {
-        //return NECIRR_BAD_DATA_BIT;
-      }
-    }
-    else if (i > NECIRR_ADDRESS_END_ARR_POS && i < NECIRR_FRAME_WIDTH)
-    {
-      if (GET_BIT(NECIRR_u32Frame,i) == GET_BIT(NECIRR_u32Frame,(i-NECIRR_ADDRESSE_WIDTH)))
+      if (GET_BIT(NECIRR_u32Frame,(i-1)) == GET_BIT(NECIRR_u32Frame,(i-NECIRR_DATA_WIDTH)))
       {
         //return NECIRR_BAD_ADDRESS_BIT;
       }
     }
 #endif /*NECIRR_EN_BIT_VERIFY*/
+    if (i == 32 || rpeatFlag)
+    {
+      /*Setting the strtEdgeFlag to wait for the new one to start handling*/
+      strtEdgeFlag  = 1;
+      /*Clearing the strtBitFlag to wait for the new one to start handling*/
+      strtBitFlag   = 0;
+      /*Clearing the rpeatFlag in case it is already set*/
+      rpeatFlag     = 0;
+      /*Getting the data byte from the frame*/
+      data = GET_BYTE(NECIRR_u32Frame,NECIRR_DATA_START_ARR_POS);
+      /*Getting the address byte from the frame*/
+      address = GET_BYTE(NECIRR_u32Frame,NECIRR_ADDRESS_START_ARR_POS);
+      /*Calling the passed function to take the action */
+      ActionfnPtr(address, data);
+      /*Return here as no need for starting the timer again*/
+      return;
+      // return NECIRR_OK;
+    }
+
     NECIRR_START_TIMER_FNC;
   }
  // return NECIRR_OK;
