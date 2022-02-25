@@ -4,7 +4,7 @@
 /*Description    : An educational driver file for IR receiver based      */
 /*                 on NEC standard.                                      */
 /* Date          : 22 02 2022                                            */
-/* Version       : V03-> Repeat handling  &  data verification edited    */
+/* Version       : V3.1-> flag issues fixing                             */
 /* GitHub        : https://github.com/mmokhtar761                        */
 /*************************************************************************/
 #include "STD_TYPES.h"
@@ -33,6 +33,7 @@ void NECIRR_voidHandlelFaillingEdge (void)
      i = 0;
      /*Starting the timer to count time*/
     NECIRR_START_TIMER_FNC;
+    strtBitFlag = 0;
   }
   else
   {
@@ -47,6 +48,8 @@ void NECIRR_voidHandlelFaillingEdge (void)
       /*Starting Bit is detected*/
       /*Announcing the starting bit has come*/
       strtBitFlag = 1;
+      i = 0;
+
     }
     else if (u32TmeHlder> NECIRR_REPEAT_MIN_TME && u32TmeHlder<NECIRR_REPEAT_MAX_TME )
     {

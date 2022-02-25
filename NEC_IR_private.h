@@ -4,7 +4,7 @@
 /*Description    : An educational driver file for IR receiver based      */
 /*                 on NEC standard.                                      */
 /* Date          : 22 02 2022                                            */
-/* Version       : V03-> Repeat handling  &  data verification edited    */
+/* Version       : V3.1-> flag issues fixing                             */
 /* GitHub        : https://github.com/mmokhtar761                        */
 /*************************************************************************/
 #ifndef NEC_IR_PRIVATE_H
