@@ -10,3 +10,4 @@ An educational driver for IR receiver based on NEC standard.
 - V02 -> A better optimized code.<all time timer bug>
 - V03 -> Repeat handling  &  data verification edited.<all time timer bug is handled>
 - V3.1-> flag issues fixing & video of first tests <logic bug is there>
+- V3.2-> Reduced sysTick time & enabled its interrupt.

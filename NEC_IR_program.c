@@ -4,7 +4,7 @@
 /*Description    : An educational driver file for IR receiver based      */
 /*                 on NEC standard.                                      */
 /* Date          : 22 02 2022                                            */
-/* Version       : V3.1-> flag issues fixing                             */
+/* Version       : V3.2-> Reduced sysTick time & enabled its interrupt   */
 /* GitHub        : https://github.com/mmokhtar761                        */
 /*************************************************************************/
 #include "STD_TYPES.h"

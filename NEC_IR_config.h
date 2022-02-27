@@ -4,7 +4,7 @@
 /*Description    : An educational driver file for IR receiver based      */
 /*                 on NEC standard.                                      */
 /* Date          : 22 02 2022                                            */
-/* Version       : V3.1-> flag issues fixing                             */
+/* Version       : V3.2-> Reduced sysTick time & enabled its interrupt   */
 /* GitHub        : https://github.com/mmokhtar761                        */
 /*************************************************************************/
 #ifndef NEC_IR_CONFIG_H
@@ -21,7 +21,7 @@ Options:
 #include "STK_interface.h"
 
 /*You have to initialize a timer and define the following functions to use it in the driver*/
-#define NECIRR_START_TIMER_FNC       STK_voidSetSingleShotTimerIR(NECIRR_MAX_FRAME_TME)
+#define NECIRR_START_TIMER_FNC       STK_voidSetSingleShotTimerIR(NECIRR_MSG_2_MSG_TME)
 #define NECIRR_RESUME_TIMER_FNC      STK_voidResumeSysTick()
 
 #define NECIRR_STOP_TIMER_FNC       STK_voidStopSysTick()
