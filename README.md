@@ -1,9 +1,7 @@
 # NEC_IR_STANDARD_RECEIVER_Driver
-An educational driver for IR receiver based on NEC standard.
+A fully  generic educational driver for IR receiver based on NEC standard.
 (Repeat code isn't stable yet)
 =======
-An educational driver for IR receiver based on NEC standard.
-(Repeat code hasn't been added yet)
 ## LOG
 - V1.0-> Raw code.
 - V1.1-> Raw code. (Algorithm A) Essential tests.
